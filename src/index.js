@@ -4,8 +4,11 @@ import parserMod from './parser';
 
 let parser = parserMod.parser;
 parser.yy = {
-    test() {
-        return 1;
+    test(t) {
+        if (t) {
+            return 1;
+        }
+        return 2;
     }
 };
 
