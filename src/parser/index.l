@@ -5,7 +5,7 @@ n       \n+
 
 
 %{
-    var debug = require('debug')('jison-lesslint: lexer');
+    var debug = require('debug')('jsc: lexer');
     var s, s2, s3;
     var rv, rv2, e_offset, col, row, len, value;
     var match, match2;

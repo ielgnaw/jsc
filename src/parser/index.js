@@ -579,7 +579,7 @@ stateStackSize:function stateStackSize() {
     },
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-    var debug = require('debug')('jison-lesslint: lexer');
+    var debug = require('debug')('jsc: lexer');
     var s, s2, s3;
     var rv, rv2, e_offset, col, row, len, value;
     var match, match2;
