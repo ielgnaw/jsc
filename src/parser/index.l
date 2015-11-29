@@ -1,7 +1,16 @@
 
-number  \d+
-space   [ \s\t]+
-n       \n+
+number                      \d+
+space                       [ \s\t]+
+n                           \n+
+
+string1                     \"([^\n\r\f\\"])*\"
+/*"*/ // 这个注释是为了把 string1 的正则所带来的高亮影响给去掉
+string2                     \'([^\n\r\f\\'])*\'
+/*'*/ // 这个注释是为了把 string2 的正则所带来的高亮影响给去掉
+string                      {string1}|{string2}
+
+leftBrace                   \{
+rightBrace                  \}
 
 
 %{
@@ -19,10 +28,6 @@ n       \n+
 
 // s 开始状态
 %x s
-
-// b 进入选择器内部即块的状态
-// sb 进入选择器内部子选择器内部即子块的状态
-// p 进入属性的状态，这个状态用来帮助找到属性的值
 
 %%
 
@@ -46,6 +51,20 @@ n       \n+
 <s>{n} {
     return 'N';
 };
+
+<s>{string} {
+    yytext = yytext.substr(1, yyleng - 2);
+    return 'STRING';
+};
+
+<s>{leftBrace} {
+    return 'BRACE_START';
+};
+
+<s>{rightBrace} {
+    return 'BRACE_END';
+};
+
 
 <s><<EOF>> {
     this.popState();

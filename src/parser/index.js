@@ -75,9 +75,9 @@ var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o};
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"root":3,"EOF":4,"stmts":5,"number_stmt":6,"NUMBER":7,"SPACE":8,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"EOF",7:"NUMBER",8:"SPACE"},
-productions_: [0,[3,1],[3,2],[5,1],[6,1],[6,2]],
+symbols_: {"error":2,"root":3,"EOF":4,"JSONText":5,"JSONObject":6,"BRACE_START":7,"BRACE_END":8,"JSONString":9,"STRING":10,"number_stmt":11,"NUMBER":12,"SPACE":13,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"EOF",7:"BRACE_START",8:"BRACE_END",10:"STRING",12:"NUMBER",13:"SPACE"},
+productions_: [0,[3,1],[3,2],[5,1],[6,2],[9,1],[11,1],[11,2]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -90,18 +90,37 @@ case 1:
 break;
 case 2:
 
-        this.$ = parseInt($$[$0-1], 10);
+        console.warn($$[$0-1], '000');
+        return $$[$0-1];
+        // this.$ = parseInt($$[$0-1], 10);
     
 break;
-case 4: case 5:
+case 4:
+
+            return {};
+        
+break;
+case 5:
+
+            // replace escaped characters with actual character
+            this.$ = yytext.replace(/\\(\\|")/g, '$' + '1')
+                    .replace(/\\n/g,'\n')
+                    .replace(/\\r/g,'\r')
+                    .replace(/\\t/g,'\t')
+                    .replace(/\\v/g,'\v')
+                    .replace(/\\f/g,'\f')
+                    .replace(/\\b/g,'\b');
+        
+break;
+case 6: case 7:
 
         return parseInt($$[$0], 10);
     
 break;
 }
 },
-table: [{3:1,4:[1,2],5:3,6:4,7:[1,5],8:[1,6]},{1:[3]},{1:[2,1]},{4:[1,7]},{4:[2,3]},{4:[2,4]},{7:[1,8]},{1:[2,2]},{4:[2,5]}],
-defaultActions: {2:[2,1],4:[2,3],5:[2,4],7:[2,2],8:[2,5]},
+table: [{3:1,4:[1,2],5:3,6:4,7:[1,5]},{1:[3]},{1:[2,1]},{4:[1,6]},{4:[2,3]},{8:[1,7]},{1:[2,2]},{4:[2,4]}],
+defaultActions: {2:[2,1],4:[2,3],6:[2,2],7:[2,4]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -588,7 +607,7 @@ performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:
-    return 7;
+    return 12;
 
 break;
 case 1:
@@ -597,7 +616,7 @@ case 1:
 
 break;
 case 2:
-    return 8;
+    return 13;
 
 break;
 case 3:
@@ -609,22 +628,35 @@ case 4:
 
 break;
 case 5:
+    yy_.yytext = yy_.yytext.substr(1, yy_.yyleng - 2);
+    return 10;
+
+break;
+case 6:
+    return 7;
+
+break;
+case 7:
+    return 8;
+
+break;
+case 8:
     this.popState();
     return 4;
 
 break;
-case 6:
+case 9:
     return 4;
 
 break;
-case 7:
+case 10:
     this.begin('s');
 
 break;
 }
 },
-rules: [/^(?:(\d+))/,/^(?:([ \s\t]+)(?=$))/,/^(?:([ \s\t]+))/,/^(?:(\n+)(?=$))/,/^(?:(\n+))/,/^(?:$)/,/^(?:$)/,/^(?:)/],
-conditions: {"s":{"rules":[0,1,2,3,4,5],"inclusive":false},"INITIAL":{"rules":[6,7],"inclusive":true}}
+rules: [/^(?:(\d+))/,/^(?:([ \s\t]+)(?=$))/,/^(?:([ \s\t]+))/,/^(?:(\n+)(?=$))/,/^(?:(\n+))/,/^(?:(("([^\n\r\f\\"])*")|('([^\n\r\f\\'])*')))/,/^(?:(\{))/,/^(?:(\}))/,/^(?:$)/,/^(?:$)/,/^(?:)/],
+conditions: {"s":{"rules":[0,1,2,3,4,5,6,7,8],"inclusive":false},"INITIAL":{"rules":[9,10],"inclusive":true}}
 });
 return lexer;
 })();

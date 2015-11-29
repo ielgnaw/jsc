@@ -18,14 +18,37 @@ root
     : EOF {
         $$ = 0;
     }
-    | stmts EOF {
-        $$ = parseInt($1, 10);
+    | JSONText EOF {
+        console.warn($1, '000');
+        return $1;
+        // $$ = parseInt($1, 10);
     }
 ;
 
-stmts
-    : number_stmt
+JSONText
+    : JSONObject
 ;
+
+JSONObject
+    : BRACE_START BRACE_END
+        {
+            return {};
+        }
+;
+
+JSONString
+    : STRING
+        {
+            // replace escaped characters with actual character
+            $$ = yytext.replace(/\\(\\|")/g, '$' + '1')
+                    .replace(/\\n/g,'\n')
+                    .replace(/\\r/g,'\r')
+                    .replace(/\\t/g,'\t')
+                    .replace(/\\v/g,'\v')
+                    .replace(/\\f/g,'\f')
+                    .replace(/\\b/g,'\b');
+        }
+    ;
 
 number_stmt
     : NUMBER {
