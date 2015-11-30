@@ -11,6 +11,7 @@ string                      {string1}|{string2}
 
 leftBrace                   \{
 rightBrace                  \}
+colon                       ':'
 
 
 %{
@@ -31,30 +32,42 @@ rightBrace                  \}
 
 %%
 
-<s>{number} {
-    return 'NUMBER';
-};
+// <s>{number} {
+//     return 'NUMBER';
+// };
 
-<s>{space}/<<EOF>> {
-    this.popState();
-    return 'EOF';
-};
+// <s>{space}/<<EOF>> {
+//     this.popState();
+//     return 'EOF';
+// };
+
+// <s>{space} {
+//     return 'SPACE';
+// };
+
+// <s>{n}/<<EOF>> {
+//     return 'EOF';
+// };
+
+// <s>{n} {
+//     return 'N';
+// };
 
 <s>{space} {
-    return 'SPACE';
-};
-
-<s>{n}/<<EOF>> {
-    return 'EOF';
+    // ignore whitespace
 };
 
 <s>{n} {
-    return 'N';
+     // ignore \n
 };
 
 <s>{string} {
     yytext = yytext.substr(1, yyleng - 2);
     return 'STRING';
+};
+
+<s>{colon} {
+    return 'COLON';
 };
 
 <s>{leftBrace} {

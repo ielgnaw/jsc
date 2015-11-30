@@ -30,11 +30,36 @@ JSONText
 ;
 
 JSONObject
-    : BRACE_START BRACE_END
-        {
-            return {};
-        }
+    : BRACE_START BRACE_END {
+        return {};
+    }
+    | BRACE_START JSONMemberList BRACE_END {
+        $$ = $2;
+    }
 ;
+
+JSONMemberList
+    : JSONMember
+        {{$$ = {}; $$[$1[0]] = $1[1];}}
+    | JSONMemberList ',' JSONMember
+        {$$ = $1; $1[$3[0]] = $3[1];}
+    ;
+
+JSONMember
+    : JSONString COLON JSONValue
+        {$$ = [$1, $3];}
+    ;
+
+JSONValue
+    : JSONString
+;
+    // : JSONNullLiteral
+    // | JSONBooleanLiteral
+    // | JSONString
+    // | JSONNumber
+    // | JSONObject
+    // | JSONArray
+    // ;
 
 JSONString
     : STRING
@@ -49,12 +74,3 @@ JSONString
                     .replace(/\\b/g,'\b');
         }
     ;
-
-number_stmt
-    : NUMBER {
-        return parseInt($1, 10);
-    }
-    | SPACE NUMBER {
-        return parseInt($2, 10);
-    }
-;
