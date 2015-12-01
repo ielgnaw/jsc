@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[8,11];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,12],$V2=[1,13],$V3=[1,14],$V4=[1,15],$V5=[1,16],$V6=[1,17],$V7=[1,18],$V8=[4,20,23,27],$V9=[4,20,23,25,27],$Va=[20,23],$Vb=[23,27];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"root":3,"EOF":4,"JSONText":5,"JSONObject":6,"BRACE_START":7,"BRACE_END":8,"JSONMemberList":9,"JSONMember":10,",":11,"JSONString":12,"COLON":13,"JSONValue":14,"STRING":15,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"EOF",7:"BRACE_START",8:"BRACE_END",11:",",13:"COLON",15:"STRING"},
-productions_: [0,[3,1],[3,2],[5,1],[6,2],[6,3],[9,1],[9,3],[10,3],[14,1],[12,1]],
+symbols_: {"error":2,"root":3,"EOF":4,"content":5,"nullLiteral":6,"booleanLiteral":7,"numberLiteral":8,"stringLiteral":9,"identLiteral":10,"objectLiteral":11,"arrayLiteral":12,"NULL":13,"TRUE":14,"FALSE":15,"NUMBER":16,"STRING":17,"IDENT":18,"BRACE_START":19,"BRACE_END":20,"objectMemberList":21,"objectMember":22,"COMMA":23,"objectMember_group0":24,"COLON":25,"SBRACKET_START":26,"SBRACKET_END":27,"arrayMemberList":28,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"EOF",13:"NULL",14:"TRUE",15:"FALSE",16:"NUMBER",17:"STRING",18:"IDENT",19:"BRACE_START",20:"BRACE_END",23:"COMMA",25:"COLON",26:"SBRACKET_START",27:"SBRACKET_END"},
+productions_: [0,[3,1],[3,2],[5,1],[5,1],[5,1],[5,1],[5,1],[5,1],[5,1],[6,1],[7,1],[7,1],[8,1],[9,1],[10,1],[11,2],[11,3],[21,1],[21,3],[22,3],[12,2],[12,3],[28,1],[28,3],[24,1],[24,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -85,51 +85,97 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-        this.$ = 0;
+        this.$ = '';
     
 break;
 case 2:
 
-        console.warn($$[$0-1], '000');
         return $$[$0-1];
-        // this.$ = parseInt($$[$0-1], 10);
     
 break;
-case 4:
+case 10:
 
-        return {};
+        this.$ = null;
     
 break;
-case 5:
+case 11:
+
+        this.$ = true;
+    
+break;
+case 12:
+
+        this.$ = false;
+    
+break;
+case 13:
+
+        this.$ = Number(yytext);
+    
+break;
+case 14:
+
+        this.$ = yytext.replace(/\\(\\|")/g, '$' + '1')
+                .replace(/\\n/g,'\n')
+                .replace(/\\r/g,'\r')
+                .replace(/\\t/g,'\t')
+                .replace(/\\v/g,'\v')
+                .replace(/\\f/g,'\f')
+                .replace(/\\b/g,'\b');
+    
+break;
+case 15:
+
+        this.$ = $$[$0];
+    
+break;
+case 16:
+
+        this.$ = {};
+    
+break;
+case 17: case 22:
 
         this.$ = $$[$0-1];
     
 break;
-case 6:
-this.$ = {}; this.$[$$[$0][0]] = $$[$0][1];
-break;
-case 7:
-this.$ = $$[$0-2]; $$[$0-2][$$[$0][0]] = $$[$0][1];
-break;
-case 8:
-this.$ = [$$[$0-2], $$[$0]];
-break;
-case 10:
+case 18:
 
-            // replace escaped characters with actual character
-            this.$ = yytext.replace(/\\(\\|")/g, '$' + '1')
-                    .replace(/\\n/g,'\n')
-                    .replace(/\\r/g,'\r')
-                    .replace(/\\t/g,'\t')
-                    .replace(/\\v/g,'\v')
-                    .replace(/\\f/g,'\f')
-                    .replace(/\\b/g,'\b');
-        
+        this.$ = {};
+        this.$[$$[$0][0]] = $$[$0][1];
+    
+break;
+case 19:
+
+        this.$ = $$[$0-2];
+        $$[$0-2][$$[$0][0]] = $$[$0][1];
+    
+break;
+case 20:
+
+        this.$ = [$$[$0-2], $$[$0]];
+    
+break;
+case 21:
+
+        this.$ = [];
+    
+break;
+case 23:
+
+        this.$ = [$$[$0]]
+    
+break;
+case 24:
+
+        $$[$0-2].push($$[$0]);
+        this.$ = $$[$0-2];
+    
 break;
 }
 },
-table: [{3:1,4:[1,2],5:3,6:4,7:[1,5]},{1:[3]},{1:[2,1]},{4:[1,6]},{4:[2,3]},{8:[1,7],9:8,10:9,12:10,15:$V0},{1:[2,2]},{4:[2,4]},{8:[1,12],11:[1,13]},o($V1,[2,6]),{13:[1,14]},o([8,11,13],[2,10]),{4:[2,5]},{10:15,12:10,15:$V0},{12:17,14:16,15:$V0},o($V1,[2,7]),o($V1,[2,8]),o($V1,[2,9])],
-defaultActions: {2:[2,1],4:[2,3],6:[2,2],7:[2,4],12:[2,5]},
+table: [{3:1,4:[1,2],5:3,6:4,7:5,8:6,9:7,10:8,11:9,12:10,13:$V0,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,26:$V7},{1:[3]},{1:[2,1]},{4:[1,19]},o($V8,[2,3]),o($V8,[2,4]),o($V8,[2,5]),o($V8,[2,6]),o($V8,[2,7]),o($V8,[2,8]),o($V8,[2,9]),o($V8,[2,10]),o($V8,[2,11]),o($V8,[2,12]),o($V8,[2,13]),o($V9,[2,14]),o($V9,[2,15]),{9:24,10:25,17:$V4,18:$V5,20:[1,20],21:21,22:22,24:23},{5:28,6:4,7:5,8:6,9:7,10:8,11:9,12:10,13:$V0,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,26:$V7,27:[1,26],28:27},{1:[2,2]},o($V8,[2,16]),{20:[1,29],23:[1,30]},o($Va,[2,18]),{25:[1,31]},{25:[2,25]},{25:[2,26]},o($V8,[2,21]),{23:[1,33],27:[1,32]},o($Vb,[2,23]),o($V8,[2,17]),{9:24,10:25,17:$V4,18:$V5,22:34,24:23},{5:35,6:4,7:5,8:6,9:7,10:8,11:9,12:10,13:$V0,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,26:$V7},o($V8,[2,22]),{5:36,6:4,7:5,8:6,9:7,10:8,11:9,12:10,13:$V0,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,26:$V7},o($Va,[2,19]),o($Va,[2,20]),o($Vb,[2,24])],
+defaultActions: {2:[2,1],19:[2,2],24:[2,25],25:[2,26]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -624,39 +670,71 @@ case 1:
 
 break;
 case 2:
-    yy_.yytext = yy_.yytext.substr(1, yy_.yyleng - 2);
-    return 15;
+    return 14;
 
 break;
 case 3:
-    return 13;
+    return 15;
 
 break;
 case 4:
-    return 7;
+    return 13;
 
 break;
 case 5:
-    return 8;
+    return 16;
 
 break;
 case 6:
+    yy_.yytext = yy_.yytext.substr(1, yy_.yyleng - 2);
+    return 17;
+
+break;
+case 7:
+    return 18;
+
+break;
+case 8:
+    return 25;
+
+break;
+case 9:
+    return 23;
+
+break;
+case 10:
+    return 26;
+
+break;
+case 11:
+    return 27;
+
+break;
+case 12:
+    return 19;
+
+break;
+case 13:
+    return 20;
+
+break;
+case 14:
     this.popState();
     return 4;
 
 break;
-case 7:
+case 15:
     return 4;
 
 break;
-case 8:
+case 16:
     this.begin('s');
 
 break;
 }
 },
-rules: [/^(?:([ \s\t]+))/,/^(?:(\n+))/,/^(?:(("([^\n\r\f\\"])*")|('([^\n\r\f\\'])*')))/,/^(?:(:))/,/^(?:(\{))/,/^(?:(\}))/,/^(?:$)/,/^(?:$)/,/^(?:)/],
-conditions: {"s":{"rules":[0,1,2,3,4,5,6],"inclusive":false},"INITIAL":{"rules":[7,8],"inclusive":true}}
+rules: [/^(?:([ \s\t]+))/,/^(?:(\n+))/,/^(?:true\b)/,/^(?:false\b)/,/^(?:null\b)/,/^(?:((-?([0-9]|[1-9][0-9]+))(\.[0-9]+)?([eE][-+]?[0-9]+)?\b))/,/^(?:(("([^\n\r\f\\"])*")|('([^\n\r\f\\'])*')))/,/^(?:([a-zA-Z_0-9]+))/,/^(?:(:))/,/^(?:(,))/,/^(?:(\[))/,/^(?:(\]))/,/^(?:(\{))/,/^(?:(\}))/,/^(?:$)/,/^(?:$)/,/^(?:)/],
+conditions: {"s":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14],"inclusive":false},"INITIAL":{"rules":[15,16],"inclusive":true}}
 });
 return lexer;
 })();

@@ -9,7 +9,7 @@ import p from './index';
 let debug = debugMod('jsc');
 
 let content = readFileSync(
-    join(__dirname, '..') + sep + 'src/test.less',
+    join(__dirname, '..') + sep + 'src/tmp.js',
     'utf8'
 );
 

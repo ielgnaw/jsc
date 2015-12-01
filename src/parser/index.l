@@ -1,8 +1,13 @@
 
-number                      \d+
+int                         "-"?([0-9]|[1-9][0-9]+)
+exp                         [eE][-+]?[0-9]+
+frac                        "."[0-9]+
+number                      {int}{frac}?{exp}?\b
 space                       [ \s\t]+
 n                           \n+
 
+ident                       [a-zA-Z_0-9]+
+/*'"*/ // 这个注释是为了把 ident 的正则所带来的高亮影响给去掉
 string1                     \"([^\n\r\f\\"])*\"
 /*"*/ // 这个注释是为了把 string1 的正则所带来的高亮影响给去掉
 string2                     \'([^\n\r\f\\'])*\'
@@ -11,7 +16,12 @@ string                      {string1}|{string2}
 
 leftBrace                   \{
 rightBrace                  \}
+
+leftSbracket                \[
+rightSbracket               \]
+
 colon                       ':'
+comma                       ','
 
 
 %{
@@ -32,27 +42,6 @@ colon                       ':'
 
 %%
 
-// <s>{number} {
-//     return 'NUMBER';
-// };
-
-// <s>{space}/<<EOF>> {
-//     this.popState();
-//     return 'EOF';
-// };
-
-// <s>{space} {
-//     return 'SPACE';
-// };
-
-// <s>{n}/<<EOF>> {
-//     return 'EOF';
-// };
-
-// <s>{n} {
-//     return 'N';
-// };
-
 <s>{space} {
     // ignore whitespace
 };
@@ -61,13 +50,47 @@ colon                       ':'
      // ignore \n
 };
 
+
+<s>'true' {
+    return 'TRUE';
+};
+
+<s>'false' {
+    return 'FALSE';
+};
+
+<s>'null' {
+    return 'NULL';
+};
+
+
+<s>{number} {
+    return 'NUMBER';
+};
+
 <s>{string} {
     yytext = yytext.substr(1, yyleng - 2);
     return 'STRING';
 };
 
+<s>{ident} {
+    return 'IDENT';
+};
+
 <s>{colon} {
     return 'COLON';
+};
+
+<s>{comma} {
+    return 'COMMA';
+};
+
+<s>{leftSbracket} {
+    return 'SBRACKET_START';
+};
+
+<s>{rightSbracket} {
+    return 'SBRACKET_END';
 };
 
 <s>{leftBrace} {
