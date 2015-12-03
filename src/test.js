@@ -15,6 +15,12 @@ let content = readFileSync(
 
 content = content.replace(/\r\n?/g, '\n');
 
+// try {
+//     p.parse(content)
+// } catch (e) {
+//     console.warn(e,' eeeeeeeeeeeee');
+// }
+
 let parserRet = safeStringify(p.parse(content), null, 4);
 
 console.warn(parserRet, 'ppp');

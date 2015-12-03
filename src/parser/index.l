@@ -20,6 +20,8 @@ rightBrace                  \}
 leftSbracket                \[
 rightSbracket               \]
 
+singlecomment               \/\/[^\n]*
+
 colon                       ':'
 comma                       ','
 
@@ -29,7 +31,7 @@ comma                       ','
     var s, s2, s3;
     var rv, rv2, e_offset, col, row, len, value;
     var match, match2;
-    debug(YY_START);
+    // debug(YY_START);
 %}
 
 
@@ -38,7 +40,8 @@ comma                       ','
 // 如果是包容性的状态，那么没有状态的规则也会被激活；如果是非包容的，那么只有声明了相应状态的规则才会被激活。
 
 // s 开始状态
-%x s
+// sc 进入单行注释的状态
+%x s sc
 
 %%
 
@@ -48,6 +51,20 @@ comma                       ','
 
 <s>{n} {
      // ignore \n
+};
+
+/**
+ * singlecomment
+ */
+<s>{singlecomment} {
+    if (this.topState() !== 'sc') {
+        this.begin('sc');
+    }
+    return 'SC';
+};
+
+<sc>{n} {
+    this.popState();
 };
 
 

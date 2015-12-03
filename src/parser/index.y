@@ -8,8 +8,6 @@
 %}
 
 
-%nonassoc COMMA
-
 %start root
 
 /* enable EBNF grammar syntax */
@@ -96,8 +94,11 @@ objectMemberList
 ;
 
 objectMember
-    : (stringLiteral|identLiteral) COLON content {
-        $$ = [$1, $3];
+    : SC? (stringLiteral|identLiteral) COLON content {
+        // $$ = [$1, $3];
+        $$ = [$2, $4];
+        $1 && console.warn($1);
+        // console.warn($$);
     }
 ;
 
@@ -111,11 +112,14 @@ arrayLiteral
 ;
 
 arrayMemberList
-    : content {
-        $$ = [$1]
+    : SC? content {
+        $1 && console.warn($1);
+        $$ = [$2];
     }
-    | arrayMemberList COMMA content {
-        $1.push($3);
+    | arrayMemberList COMMA SC? content {
+        $3 && console.warn($3);
+        // console.warn($1, 'sdsd');
+        $1.push($4);
         $$ = $1;
     }
 ;
