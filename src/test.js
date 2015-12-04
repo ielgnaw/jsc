@@ -23,6 +23,6 @@ content = content.replace(/\r\n?/g, '\n');
 
 let parserRet = safeStringify(p.parse(content), null, 4);
 
-console.warn(parserRet, 'ppp');
+// console.warn(parserRet, 'ppp');
 
 export var ret = parseInt(parserRet, 10);

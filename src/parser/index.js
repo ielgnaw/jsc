@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[14,15,16,17,18,19,20,28,33],$V1=[1,13],$V2=[1,14],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[4,21,24,29],$Va=[4,21,24,27,29],$Vb=[18,19,33],$Vc=[2,27],$Vd=[21,24],$Ve=[24,29];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[13,14,15,16,17,20,28,33],$V1=[1,12],$V2=[1,13],$V3=[1,14],$V4=[1,15],$V5=[1,16],$V6=[1,17],$V7=[1,18],$V8=[4,21,24,29],$V9=[17,19,33],$Va=[2,26],$Vb=[21,24],$Vc=[24,29];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"root":3,"EOF":4,"root_repetition0":5,"content":6,"nullLiteral":7,"booleanLiteral":8,"numberLiteral":9,"stringLiteral":10,"identLiteral":11,"objectLiteral":12,"arrayLiteral":13,"NULL":14,"TRUE":15,"FALSE":16,"NUMBER":17,"STRING":18,"IDENT":19,"BRACE_START":20,"BRACE_END":21,"objectMemberList":22,"objectMember":23,"COMMA":24,"objectMember_repetition0":25,"objectMember_group0":26,"COLON":27,"SBRACKET_START":28,"SBRACKET_END":29,"arrayMemberList":30,"arrayMemberList_repetition0":31,"arrayMemberList_repetition1":32,"SC":33,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"EOF",14:"NULL",15:"TRUE",16:"FALSE",17:"NUMBER",18:"STRING",19:"IDENT",20:"BRACE_START",21:"BRACE_END",24:"COMMA",27:"COLON",28:"SBRACKET_START",29:"SBRACKET_END",33:"SC"},
-productions_: [0,[3,1],[3,3],[6,1],[6,1],[6,1],[6,1],[6,1],[6,1],[6,1],[7,1],[8,1],[8,1],[9,1],[10,1],[11,1],[12,2],[12,3],[22,1],[22,3],[23,4],[13,2],[13,3],[30,2],[30,4],[5,0],[5,2],[25,0],[25,2],[26,1],[26,1],[31,0],[31,2],[32,0],[32,2]],
+symbols_: {"error":2,"root":3,"EOF":4,"root_repetition0":5,"content":6,"nullLiteral":7,"booleanLiteral":8,"numberLiteral":9,"stringLiteral":10,"objectLiteral":11,"arrayLiteral":12,"NULL":13,"TRUE":14,"FALSE":15,"NUMBER":16,"STRING":17,"identLiteral":18,"IDENT":19,"BRACE_START":20,"BRACE_END":21,"objectMemberList":22,"objectMember":23,"COMMA":24,"objectMember_repetition0":25,"objectMember_group0":26,"COLON":27,"SBRACKET_START":28,"SBRACKET_END":29,"arrayMemberList":30,"arrayMemberList_repetition0":31,"arrayMemberList_repetition1":32,"SC":33,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"EOF",13:"NULL",14:"TRUE",15:"FALSE",16:"NUMBER",17:"STRING",19:"IDENT",20:"BRACE_START",21:"BRACE_END",24:"COMMA",27:"COLON",28:"SBRACKET_START",29:"SBRACKET_END",33:"SC"},
+productions_: [0,[3,1],[3,3],[6,1],[6,1],[6,1],[6,1],[6,1],[6,1],[7,1],[8,1],[8,1],[9,1],[10,1],[18,1],[11,2],[11,3],[22,1],[22,3],[23,4],[12,2],[12,3],[30,2],[30,4],[5,0],[5,2],[25,0],[25,2],[26,1],[26,1],[31,0],[31,2],[32,0],[32,2]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -92,104 +92,151 @@ case 2:
 
         if ($$[$0-2]) {
             var startComment = yy.parseComment($$[$0-2]);
-            if (startComment.url) {
-                schema.id = startComment.url;
+            for (var i in startComment) {
+                if (i === 'url') {
+                    schema.id = startComment[i];
+                }
+                else {
+                    schema[i] = startComment[i];
+                }
             }
         }
-        schema.type = Array.isArray($$[$0-1]) ? 'array' : 'object';
-        console.warn(yy.safeStringify(schema, null ,4));
+        if (Array.isArray($$[$0-1])) {
+            schema.type = 'array';
+            schema.items = [];
+        }
+        else {
+            schema.type = 'object';
+            schema.properties = schemaProperties;
+        }
+        console.warn(yy.stringify(schema, schema.id));
         return $$[$0-1];
     
 break;
-case 10:
+case 9:
 
         this.$ = null;
     
 break;
-case 11:
+case 10:
 
         this.$ = true;
     
 break;
-case 12:
+case 11:
 
         this.$ = false;
     
 break;
+case 12:
+
+        this.$ = {
+            val: Number(yytext),
+            type: 'integer'
+        }
+    
+break;
 case 13:
 
-        this.$ = Number(yytext);
+        yytext = yytext.replace(/\\(\\|")/g, '$' + '1')
+            .replace(/\\n/g,'\n')
+            .replace(/\\r/g,'\r')
+            .replace(/\\t/g,'\t')
+            .replace(/\\v/g,'\v')
+            .replace(/\\f/g,'\f')
+            .replace(/\\b/g,'\b');
+        this.$ = {
+            val: yytext,
+            type: 'string'
+        }
     
 break;
 case 14:
 
-        this.$ = yytext.replace(/\\(\\|")/g, '$' + '1')
-                .replace(/\\n/g,'\n')
-                .replace(/\\r/g,'\r')
-                .replace(/\\t/g,'\t')
-                .replace(/\\v/g,'\v')
-                .replace(/\\f/g,'\f')
-                .replace(/\\b/g,'\b');
+        this.$ = $$[$0];
     
 break;
 case 15:
 
-        this.$ = $$[$0];
-    
-break;
-case 16:
-
         this.$ = {};
     
 break;
-case 17: case 22:
+case 16: case 21:
 
         this.$ = $$[$0-1];
     
 break;
+case 17:
+
+        // console.warn($$[$0]);
+        // schemaProperties[$$[$0].key] = {
+        //     id: '$schemaId-' + $$[$0].key,
+        //     type: $$[$0].val.type
+        // };
+        // yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
+
+        // if ($$[$0].val.key) {
+        //     delete schemaProperties[$$[$0].val.key];
+        //     schemaProperties[$$[$0].key] = {
+        //         id: '$schemaId-' + $$[$0].key,
+        //         type: 'object'
+        //     };
+        //     if (!schemaProperties[$$[$0].key].properties) {
+        //         schemaProperties[$$[$0].key].properties = {};
+        //     }
+        //     schemaProperties[$$[$0].key].properties[$$[$0].val.key] = {
+        //         id: '$schemaId-' + $$[$0].key + '/' + $$[$0].val.key,
+        //         type: $$[$0].val.val.type
+        //     };
+        //     yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
+        // }
+        // else {
+        //     schemaProperties[$$[$0].key] = {
+        //         id: '$schemaId-' + $$[$0].key,
+        //         type: $$[$0].val.type
+        //     };
+        //     yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
+        // }
+    
+break;
 case 18:
 
-        // this.$ = {};
-        // this.$[$$[$0][0]] = $$[$0][1];
-        // this.$ = $$[$0];
-        this.$ = {};
-        this.$[$$[$0].key] = $$[$0].val;
+        console.warn(123123);
+        schemaProperties[$$[$0].key] = {
+            id: '$schemaId-' + $$[$0].key,
+            type: $$[$0].val.type,
+        };
+        yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
     
 break;
 case 19:
 
-        // this.$ = $$[$0-2];
-        // $$[$0-2][$$[$0][0]] = $$[$0][1];
-
-        $$[$0-2][$$[$0].key] = $$[$0].val;
-        this.$ = $$[$0-2];
+        if ($$[$0].key) {
+            $$[$0].parent = $$[$0-2];
+        }
+        var objectComment = {};
+        if ($$[$0-3]) {
+            objectComment = yy.parseComment($$[$0-3]);
+        }
+        this.$ = {
+            key: $$[$0-2],
+            val: $$[$0],
+            comment: objectComment
+        };
     
 break;
 case 20:
 
-        var tmp = {
-            key: $$[$0-2],
-            val: $$[$0]
-        };
-
-        if ($$[$0-3]) {
-            tmp.comment = $$[$0-3];
-        }
-        this.$ = tmp;
-    
-break;
-case 21:
-
         this.$ = [];
     
 break;
-case 23:
+case 22:
 
         // $$[$0-1] && console.warn($$[$0-1]);
         this.$ = [$$[$0]];
     
 break;
-case 24:
+case 23:
 
         // $$[$0-1] && console.warn($$[$0-1]);
         // console.warn($$[$0-3], 'sdsd');
@@ -197,16 +244,16 @@ case 24:
         this.$ = $$[$0-3];
     
 break;
-case 25: case 27: case 31: case 33:
+case 24: case 26: case 30: case 32:
 this.$ = [];
 break;
-case 26: case 28: case 32: case 34:
+case 25: case 27: case 31: case 33:
 $$[$0-1].push($$[$0]);
 break;
 }
 },
-table: [o($V0,[2,25],{3:1,5:3,4:[1,2]}),{1:[3]},{1:[2,1]},{6:4,7:6,8:7,9:8,10:9,11:10,12:11,13:12,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,20:$V7,28:$V8,33:[1,5]},{4:[1,21]},o($V0,[2,26]),o($V9,[2,3]),o($V9,[2,4]),o($V9,[2,5]),o($V9,[2,6]),o($V9,[2,7]),o($V9,[2,8]),o($V9,[2,9]),o($V9,[2,10]),o($V9,[2,11]),o($V9,[2,12]),o($V9,[2,13]),o($Va,[2,14]),o($Va,[2,15]),o($Vb,$Vc,{22:23,23:24,25:25,21:[1,22]}),o($V0,[2,31],{30:27,31:28,29:[1,26]}),{1:[2,2]},o($V9,[2,16]),{21:[1,29],24:[1,30]},o($Vd,[2,18]),{10:33,11:34,18:$V5,19:$V6,26:31,33:[1,32]},o($V9,[2,21]),{24:[1,36],29:[1,35]},{6:37,7:6,8:7,9:8,10:9,11:10,12:11,13:12,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,20:$V7,28:$V8,33:[1,38]},o($V9,[2,17]),o($Vb,$Vc,{25:25,23:39}),{27:[1,40]},o($Vb,[2,28]),{27:[2,29]},{27:[2,30]},o($V9,[2,22]),o($V0,[2,33],{32:41}),o($Ve,[2,23]),o($V0,[2,32]),o($Vd,[2,19]),{6:42,7:6,8:7,9:8,10:9,11:10,12:11,13:12,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,20:$V7,28:$V8},{6:43,7:6,8:7,9:8,10:9,11:10,12:11,13:12,14:$V1,15:$V2,16:$V3,17:$V4,18:$V5,19:$V6,20:$V7,28:$V8,33:[1,44]},o($Vd,[2,20]),o($Ve,[2,24]),o($V0,[2,34])],
-defaultActions: {2:[2,1],21:[2,2],33:[2,29],34:[2,30]},
+table: [o($V0,[2,24],{3:1,5:3,4:[1,2]}),{1:[3]},{1:[2,1]},{6:4,7:6,8:7,9:8,10:9,11:10,12:11,13:$V1,14:$V2,15:$V3,16:$V4,17:$V5,20:$V6,28:$V7,33:[1,5]},{4:[1,19]},o($V0,[2,25]),o($V8,[2,3]),o($V8,[2,4]),o($V8,[2,5]),o($V8,[2,6]),o($V8,[2,7]),o($V8,[2,8]),o($V8,[2,9]),o($V8,[2,10]),o($V8,[2,11]),o($V8,[2,12]),o([4,21,24,27,29],[2,13]),o($V9,$Va,{22:21,23:22,25:23,21:[1,20]}),o($V0,[2,30],{30:25,31:26,29:[1,24]}),{1:[2,2]},o($V8,[2,15]),{21:[1,27],24:[1,28]},o($Vb,[2,17]),{10:31,17:$V5,18:32,19:[1,33],26:29,33:[1,30]},o($V8,[2,20]),{24:[1,35],29:[1,34]},{6:36,7:6,8:7,9:8,10:9,11:10,12:11,13:$V1,14:$V2,15:$V3,16:$V4,17:$V5,20:$V6,28:$V7,33:[1,37]},o($V8,[2,16]),o($V9,$Va,{25:23,23:38}),{27:[1,39]},o($V9,[2,27]),{27:[2,28]},{27:[2,29]},{27:[2,14]},o($V8,[2,21]),o($V0,[2,32],{32:40}),o($Vc,[2,22]),o($V0,[2,31]),o($Vb,[2,18]),{6:41,7:6,8:7,9:8,10:9,11:10,12:11,13:$V1,14:$V2,15:$V3,16:$V4,17:$V5,20:$V6,28:$V7},{6:42,7:6,8:7,9:8,10:9,11:10,12:11,13:$V1,14:$V2,15:$V3,16:$V4,17:$V5,20:$V6,28:$V7,33:[1,43]},o($Vb,[2,19]),o($Vc,[2,23]),o($V0,[2,33])],
+defaultActions: {2:[2,1],19:[2,2],31:[2,28],32:[2,29],33:[2,14]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -353,8 +400,11 @@ parse: function parse(input) {
 }};
 
     var schema = {
-        '$schema': 'http://json-schema.org/draft-04/schema#'
+        '$schema': 'http://json-schema.org/draft-04/schema#',
+        'id': ''
     };
+
+    var schemaProperties = {};
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
@@ -710,24 +760,24 @@ case 3:
 
 break;
 case 4:
-    return 15;
-
-break;
-case 5:
-    return 16;
-
-break;
-case 6:
     return 14;
 
 break;
+case 5:
+    return 15;
+
+break;
+case 6:
+    return 13;
+
+break;
 case 7:
-    return 17;
+    return 16;
 
 break;
 case 8:
     yy_.yytext = yy_.yytext.substr(1, yy_.yyleng - 2);
-    return 18;
+    return 17;
 
 break;
 case 9:

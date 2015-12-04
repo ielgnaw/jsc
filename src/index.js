@@ -12,7 +12,38 @@ parser.yy = {
         return 2;
     },
 
-    safeStringify: safeStringify,
+    stringify(schema, schemaId) {
+        return safeStringify(schema, null, 4).replace(/\$schemaId-/g, schemaId + '/');
+    },
+
+    trim(str) {
+        return str.replace(/(^\s+)|(\s+$)/g, '');
+    },
+
+    /**
+     * 对象属性拷贝
+     *
+     * @param {Object} target 目标对象
+     * @param {...Object} source 源对象
+     *
+     * @return {Object} 返回目标对象
+     */
+    extend(target) {
+        var i = -1;
+        var length = arguments.length;
+        while (++i < length) {
+            var src = arguments[i];
+            if (src == null) {
+                continue;
+            }
+            for (var key in src) {
+                if (src.hasOwnProperty(key)) {
+                    target[key] = src[key];
+                }
+            }
+        }
+        return target;
+    },
 
     /**
      * 分析注释内容
@@ -30,11 +61,12 @@ parser.yy = {
             let segments = str.split(';');
             let i = -1;
             let len = segments.length;
-
             while (++i < len) {
                 /([^:]*):(.*)/.test(segments[i]);
-                if (RegExp.$1) {
-                    comment[RegExp.$1] = RegExp.$2;
+                var key = RegExp.$1;
+                var val = RegExp.$2;
+                if (key) {
+                    comment[this.trim(key)] = this.trim(val);
                 }
             }
         }

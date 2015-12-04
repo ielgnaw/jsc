@@ -1,7 +1,10 @@
 %{
     var schema = {
-        '$schema': 'http://json-schema.org/draft-04/schema#'
+        '$schema': 'http://json-schema.org/draft-04/schema#',
+        'id': ''
     };
+
+    var schemaProperties = {};
 %}
 
 
@@ -19,12 +22,24 @@ root
     | SC* content EOF {
         if ($1) {
             var startComment = yy.parseComment($1);
-            if (startComment.url) {
-                schema.id = startComment.url;
+            for (var i in startComment) {
+                if (i === 'url') {
+                    schema.id = startComment[i];
+                }
+                else {
+                    schema[i] = startComment[i];
+                }
             }
         }
-        schema.type = Array.isArray($2) ? 'array' : 'object';
-        console.warn(yy.safeStringify(schema, null ,4));
+        if (Array.isArray($2)) {
+            schema.type = 'array';
+            schema.items = [];
+        }
+        else {
+            schema.type = 'object';
+            schema.properties = schemaProperties;
+        }
+        console.warn(yy.stringify(schema, schema.id));
         return $2;
     }
 ;
@@ -34,7 +49,7 @@ content
     | booleanLiteral
     | numberLiteral
     | stringLiteral
-    | identLiteral
+    // | identLiteral
     | objectLiteral
     | arrayLiteral
 ;
@@ -56,19 +71,26 @@ booleanLiteral
 
 numberLiteral
     : NUMBER {
-        $$ = Number(yytext);
+        $$ = {
+            val: Number(yytext),
+            type: 'integer'
+        }
     }
 ;
 
 stringLiteral
     : STRING {
-        $$ = yytext.replace(/\\(\\|")/g, '$' + '1')
-                .replace(/\\n/g,'\n')
-                .replace(/\\r/g,'\r')
-                .replace(/\\t/g,'\t')
-                .replace(/\\v/g,'\v')
-                .replace(/\\f/g,'\f')
-                .replace(/\\b/g,'\b');
+        yytext = yytext.replace(/\\(\\|")/g, '$' + '1')
+            .replace(/\\n/g,'\n')
+            .replace(/\\r/g,'\r')
+            .replace(/\\t/g,'\t')
+            .replace(/\\v/g,'\v')
+            .replace(/\\f/g,'\f')
+            .replace(/\\b/g,'\b');
+        $$ = {
+            val: yytext,
+            type: 'string'
+        }
     }
 ;
 
@@ -89,32 +111,59 @@ objectLiteral
 
 objectMemberList
     : objectMember {
-        // $$ = {};
-        // $$[$1[0]] = $1[1];
-        // $$ = $1;
-        $$ = {};
-        $$[$1.key] = $1.val;
+        // console.warn($1);
+        // schemaProperties[$1.key] = {
+        //     id: '$schemaId-' + $1.key,
+        //     type: $1.val.type
+        // };
+        // yy.extend(schemaProperties[$1.key], $1.comment);
+
+        // if ($1.val.key) {
+        //     delete schemaProperties[$1.val.key];
+        //     schemaProperties[$1.key] = {
+        //         id: '$schemaId-' + $1.key,
+        //         type: 'object'
+        //     };
+        //     if (!schemaProperties[$1.key].properties) {
+        //         schemaProperties[$1.key].properties = {};
+        //     }
+        //     schemaProperties[$1.key].properties[$1.val.key] = {
+        //         id: '$schemaId-' + $1.key + '/' + $1.val.key,
+        //         type: $1.val.val.type
+        //     };
+        //     yy.extend(schemaProperties[$1.key], $1.comment);
+        // }
+        // else {
+        //     schemaProperties[$1.key] = {
+        //         id: '$schemaId-' + $1.key,
+        //         type: $1.val.type
+        //     };
+        //     yy.extend(schemaProperties[$1.key], $1.comment);
+        // }
     }
     | objectMemberList COMMA objectMember {
-        // $$ = $1;
-        // $1[$3[0]] = $3[1];
-
-        $1[$3.key] = $3.val;
-        $$ = $1;
+        schemaProperties[$3.key] = {
+            id: '$schemaId-' + $3.key,
+            type: $3.val.type,
+        };
+        yy.extend(schemaProperties[$3.key], $3.comment);
     }
 ;
 
 objectMember
     : SC* (stringLiteral|identLiteral) COLON content {
-        var tmp = {
-            key: $2,
-            val: $4
-        };
-
-        if ($1) {
-            tmp.comment = $1;
+        if ($4.key) {
+            $4.parent = $2;
         }
-        $$ = tmp;
+        var objectComment = {};
+        if ($1) {
+            objectComment = yy.parseComment($1);
+        }
+        $$ = {
+            key: $2,
+            val: $4,
+            comment: objectComment
+        };
     }
 ;
 
