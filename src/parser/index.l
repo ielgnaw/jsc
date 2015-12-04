@@ -57,6 +57,7 @@ comma                       ','
  * singlecomment
  */
 <s>{singlecomment} {
+    yytext = yytext.replace(/\/\/\s*/, '');
     if (this.topState() !== 'sc') {
         this.begin('sc');
     }

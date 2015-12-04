@@ -6,6 +6,7 @@
   "scripts": {
     "b": "babel src --out-dir lib",
     "s": "jison src/parser/index.y src/parser/index.l -o src/parser/index.js && npm run b && DEBUG=jsc* node lib/test.js",
+    "d": "jison src/parser/index.y src/parser/index.l -o src/parser/index.js && npm run b && DEBUG=jsc* node --debug-brk lib/test.js",
     "testbak": "npm run s && istanbul cover jasmine-node -x **/*.spec.js -x **/parser/index.js --captureExceptions lib/spec/*.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run s && ./node_modules/.bin/istanbul cover -x '**/*.spec.js' -x '**/parser/index.js' ./node_modules/.bin/_mocha -- --compilers js:babel/register"

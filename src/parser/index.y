@@ -1,10 +1,7 @@
 %{
-    var util = require('util');
-    var debug = require('debug')('jison-lesslint: grammar');
-
-    var ast = {
+    var schema = {
+        '$schema': 'http://json-schema.org/draft-04/schema#'
     };
-
 %}
 
 
@@ -19,8 +16,16 @@ root
     : EOF {
         $$ = '';
     }
-    | content EOF {
-        return $1;
+    | SC? content EOF {
+        if ($1) {
+            var startComment = yy.parseComment($1);
+            if (startComment.url) {
+                schema.id = startComment.url;
+            }
+        }
+        schema.type = Array.isArray($2) ? 'array' : 'object';
+        console.warn(yy.safeStringify(schema, null ,4));
+        return $2;
     }
 ;
 
@@ -30,8 +35,10 @@ content
     | numberLiteral
     | stringLiteral
     | identLiteral
-    | objectLiteral
-    | arrayLiteral
+    | objectLiteral {
+    }
+    | arrayLiteral {
+    }
 ;
 
 nullLiteral
@@ -84,21 +91,32 @@ objectLiteral
 
 objectMemberList
     : objectMember {
+        // $$ = {};
+        // $$[$1[0]] = $1[1];
+        // $$ = $1;
         $$ = {};
-        $$[$1[0]] = $1[1];
+        $$[$1.key] = $1.val;
     }
     | objectMemberList COMMA objectMember {
+        // $$ = $1;
+        // $1[$3[0]] = $3[1];
+
+        $1[$3.key] = $3.val;
         $$ = $1;
-        $1[$3[0]] = $3[1];
     }
 ;
 
 objectMember
     : SC? (stringLiteral|identLiteral) COLON content {
-        // $$ = [$1, $3];
-        $$ = [$2, $4];
-        $1 && console.warn($1);
-        // console.warn($$);
+        var tmp = {
+            key: $2,
+            val: $4
+        };
+
+        if ($1) {
+            tmp.comment = $1;
+        }
+        $$ = tmp;
     }
 ;
 
@@ -113,11 +131,11 @@ arrayLiteral
 
 arrayMemberList
     : SC? content {
-        $1 && console.warn($1);
+        // $1 && console.warn($1);
         $$ = [$2];
     }
     | arrayMemberList COMMA SC? content {
-        $3 && console.warn($3);
+        // $3 && console.warn($3);
         // console.warn($1, 'sdsd');
         $1.push($4);
         $$ = $1;
