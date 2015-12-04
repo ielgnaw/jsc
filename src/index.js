@@ -18,18 +18,24 @@ parser.yy = {
      * 分析注释内容
      * // key1:val1;key2:val2;...
      *
-     * @param {string} str 注释内容字符串
+     * @param {Array} arr 注释内容，代表一个键值对的注释配置，数组中每一个 item 代表一行的注释
      */
-    parseComment(str) {
-        str = str.replace(/;$/, '');
-        let segments = str.split(';');
-        let i = -1;
-        let len = segments.length;
+    parseComment(arr) {
         let comment = {};
-        while (++i < len) {
-            /([^:]*):(.*)/.test(segments[i]);
-            if (RegExp.$1) {
-                comment[RegExp.$1] = RegExp.$2;
+        let arrIndex = -1;
+        let arrLen = arr.length;
+        let str;
+        while (++arrIndex < arrLen) {
+            str = arr[arrIndex].replace(/;$/, '');
+            let segments = str.split(';');
+            let i = -1;
+            let len = segments.length;
+
+            while (++i < len) {
+                /([^:]*):(.*)/.test(segments[i]);
+                if (RegExp.$1) {
+                    comment[RegExp.$1] = RegExp.$2;
+                }
             }
         }
         return comment;

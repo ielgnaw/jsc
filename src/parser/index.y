@@ -16,7 +16,7 @@ root
     : EOF {
         $$ = '';
     }
-    | SC? content EOF {
+    | SC* content EOF {
         if ($1) {
             var startComment = yy.parseComment($1);
             if (startComment.url) {
@@ -35,10 +35,8 @@ content
     | numberLiteral
     | stringLiteral
     | identLiteral
-    | objectLiteral {
-    }
-    | arrayLiteral {
-    }
+    | objectLiteral
+    | arrayLiteral
 ;
 
 nullLiteral
@@ -107,7 +105,7 @@ objectMemberList
 ;
 
 objectMember
-    : SC? (stringLiteral|identLiteral) COLON content {
+    : SC* (stringLiteral|identLiteral) COLON content {
         var tmp = {
             key: $2,
             val: $4
@@ -130,11 +128,11 @@ arrayLiteral
 ;
 
 arrayMemberList
-    : SC? content {
+    : SC* content {
         // $1 && console.warn($1);
         $$ = [$2];
     }
-    | arrayMemberList COMMA SC? content {
+    | arrayMemberList COMMA SC* content {
         // $3 && console.warn($3);
         // console.warn($1, 'sdsd');
         $1.push($4);
