@@ -1,10 +1,22 @@
-// url:http://www.baidu.com;dsds:ee;
-// aaa:111
 {
-    "c1": {
-        "c2": {
-            "a": 4,
-            "c3": '3'
+    "a1": {
+        // aa: 123
+        "a11": 12,
+        // sdaa: 34
+        // dddd: 555; rrr: 234sdsa
+        "a12": "ss",
+        // rgg: 9898
+        "a2": {
+            // scsdf; kl
+            "a21": 21,
+            "a22": {
+                // naeq: rre
+                "a32": 32,
+                "a41": {
+                    // mvmbz: dfad
+                    "a51": 51
+                }
+            }
         }
     }
 }

@@ -109,24 +109,33 @@ case 2:
             schema.type = 'object';
             schema.properties = schemaProperties;
         }
-        console.warn(yy.stringify($$[$0-1]), '333');
+        console.warn(yy.stringify($$[$0-1], schema.id), '333');
         console.warn(yy.stringify(schema, schema.id));
         return $$[$0-1];
     
 break;
 case 9:
 
-        this.$ = null;
+        this.$ = {
+            type: 'null',
+            value: null
+        };
     
 break;
 case 10:
 
-        this.$ = true;
+        this.$ = {
+            type: 'boolean',
+            value: true
+        };
     
 break;
 case 11:
 
-        this.$ = false;
+        this.$ = {
+            type: 'boolean',
+            value: false
+        };
     
 break;
 case 12:
@@ -150,13 +159,17 @@ case 13:
         this.$ = {
             type: 'string',
             value: yytext
-        }
+        };
         // this.$ = yytext;
     
 break;
 case 14:
 
-        this.$ = $$[$0];
+        // this.$ = $$[$0];
+        this.$ = {
+            type: 'string',
+            value: yytext
+        };
     
 break;
 case 15:
@@ -171,24 +184,37 @@ case 16: case 21:
 break;
 case 17:
 
+        // this.$ = {
+        //     type: 'object'
+        // };
+        // $$[$0][1].id = '$schemaId-' + $$[$0][0];
+        // this.$[$$[$0][0]] = $$[$0][1];
+
         this.$ = {
-            type: 'object'
+            type: 'object',
+            id: '$schemaId-' + $$[$0][0],
+            properties: {}
         };
-        this.$[$$[$0][0]] = $$[$0][1];
-        // this.$ = {};
-        // if (!this.$.value) {
-        //     this.$.value = {};
+        $$[$0][1].id = '$schemaId-' + $$[$0][0];
+        // if (!this.$.properties) {
+            // this.$.properties = {};
         // }
-        // this.$.value[$$[$0][0]] = $$[$0][1];
-        // this.$.type = 'object';
+        this.$.properties[$$[$0][0]] = $$[$0][1];
+        // this.$.properties[$$[$0][0]].comment = $$[$0][2];
+        yy.extend(this.$.properties[$$[$0][0]], $$[$0][2]);
     
 break;
 case 18:
 
-        this.$ = $$[$0-2];
-        $$[$0-2][$$[$0][0]] = $$[$0][1];
         // this.$ = $$[$0-2];
-        // $$[$0-2].value[$$[$0][0]] = $$[$0][1];
+        // $$[$0][1].id = '$schemaId-' + $$[$0][0];
+        // $$[$0-2][$$[$0][0]] = $$[$0][1];
+
+        this.$ = $$[$0-2];
+        $$[$0][1].id = '$schemaId-' + $$[$0][0];
+        $$[$0-2].properties[$$[$0][0]] = $$[$0][1];
+        // $$[$0-2].properties[$$[$0][0]].comment = $$[$0][2];
+        yy.extend($$[$0-2].properties[$$[$0][0]], $$[$0][2]);
     
 break;
 case 19:
@@ -204,7 +230,21 @@ case 19:
         // var tmp = {};
         // tmp[$$[$0-2]] = $$[$0];
         // this.$ = tmp;
-        this.$ = [$$[$0-2].value, $$[$0]];
+
+        if ($$[$0].type === 'object') {
+            for (var i in $$[$0].properties) {
+                // if (i !== 'type') {
+                    $$[$0].properties[i].parent = $$[$0-2].value;
+                // }
+            }
+        }
+
+        var objectComment = {};
+        if ($$[$0-3]) {
+            objectComment = yy.parseComment($$[$0-3]);
+        }
+        // console.warn(objectComment);
+        this.$ = [$$[$0-2].value, $$[$0], objectComment];
 
         // this.$ = {
         //     key: $$[$0-2],
