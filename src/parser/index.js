@@ -268,20 +268,43 @@ case 19:
 break;
 case 20:
 
-        this.$ = [];
+        this.$ = {
+            type: 'array',
+            id: '$schemaId-',
+            items: []
+        };
     
 break;
 case 22:
 
         // $$[$0-1] && console.warn($$[$0-1]);
-        this.$ = [$$[$0]];
+        // this.$ = [$$[$0]];
+        // console.warn($$[$0]);
+        this.$ = {
+            type: 'array',
+            items: []
+        };
+        $$[$0].id = '$schemaId-' + this.$.items.length;
+        var arrayComment = {};
+        if ($$[$0-1]) {
+            arrayComment = yy.parseComment($$[$0-1]);
+        }
+        yy.extend($$[$0], arrayComment);
+        this.$.items.push($$[$0]);
     
 break;
 case 23:
 
-        // $$[$0-1] && console.warn($$[$0-1]);
-        // console.warn($$[$0-3], 'sdsd');
-        $$[$0-3].push($$[$0]);
+        // $$[$0-3].push($$[$0]);
+        // this.$ = $$[$0-3];
+
+        $$[$0].id = '$schemaId-' + $$[$0-3].items.length;
+        var arrayComment = {};
+        if ($$[$0-1]) {
+            arrayComment = yy.parseComment($$[$0-1]);
+        }
+        yy.extend($$[$0], arrayComment);
+        $$[$0-3].items.push($$[$0]);
         this.$ = $$[$0-3];
     
 break;

@@ -211,7 +211,11 @@ objectMember
 
 arrayLiteral
     : SBRACKET_START SBRACKET_END {
-        $$ = [];
+        $$ = {
+            type: 'array',
+            id: '$schemaId-',
+            items: []
+        };
     }
     | SBRACKET_START arrayMemberList SBRACKET_END {
         $$ = $2;
@@ -221,12 +225,31 @@ arrayLiteral
 arrayMemberList
     : SC* content {
         // $1 && console.warn($1);
-        $$ = [$2];
+        // $$ = [$2];
+        // console.warn($2);
+        $$ = {
+            type: 'array',
+            items: []
+        };
+        $2.id = '$schemaId-' + $$.items.length;
+        var arrayComment = {};
+        if ($1) {
+            arrayComment = yy.parseComment($1);
+        }
+        yy.extend($2, arrayComment);
+        $$.items.push($2);
     }
     | arrayMemberList COMMA SC* content {
-        // $3 && console.warn($3);
-        // console.warn($1, 'sdsd');
-        $1.push($4);
+        // $1.push($4);
+        // $$ = $1;
+
+        $4.id = '$schemaId-' + $1.items.length;
+        var arrayComment = {};
+        if ($3) {
+            arrayComment = yy.parseComment($3);
+        }
+        yy.extend($4, arrayComment);
+        $1.items.push($4);
         $$ = $1;
     }
 ;
