@@ -39,6 +39,7 @@ root
             schema.type = 'object';
             schema.properties = schemaProperties;
         }
+        console.warn(yy.stringify($2), '333');
         console.warn(yy.stringify(schema, schema.id));
         return $2;
     }
@@ -72,9 +73,10 @@ booleanLiteral
 numberLiteral
     : NUMBER {
         $$ = {
-            val: Number(yytext),
-            type: 'integer'
+            type: 'integer',
+            value: Number(yytext)
         }
+        // $$ = Number(yytext);
     }
 ;
 
@@ -88,9 +90,10 @@ stringLiteral
             .replace(/\\f/g,'\f')
             .replace(/\\b/g,'\b');
         $$ = {
-            val: yytext,
-            type: 'string'
+            type: 'string',
+            value: yytext
         }
+        // $$ = yytext;
     }
 ;
 
@@ -111,59 +114,58 @@ objectLiteral
 
 objectMemberList
     : objectMember {
-        // console.warn($1);
-        // schemaProperties[$1.key] = {
-        //     id: '$schemaId-' + $1.key,
-        //     type: $1.val.type
-        // };
-        // yy.extend(schemaProperties[$1.key], $1.comment);
-
-        // if ($1.val.key) {
-        //     delete schemaProperties[$1.val.key];
-        //     schemaProperties[$1.key] = {
-        //         id: '$schemaId-' + $1.key,
-        //         type: 'object'
-        //     };
-        //     if (!schemaProperties[$1.key].properties) {
-        //         schemaProperties[$1.key].properties = {};
-        //     }
-        //     schemaProperties[$1.key].properties[$1.val.key] = {
-        //         id: '$schemaId-' + $1.key + '/' + $1.val.key,
-        //         type: $1.val.val.type
-        //     };
-        //     yy.extend(schemaProperties[$1.key], $1.comment);
+        $$ = {
+            type: 'object'
+        };
+        $$[$1[0]] = $1[1];
+        // $$ = {};
+        // if (!$$.value) {
+        //     $$.value = {};
         // }
-        // else {
-        //     schemaProperties[$1.key] = {
-        //         id: '$schemaId-' + $1.key,
-        //         type: $1.val.type
-        //     };
-        //     yy.extend(schemaProperties[$1.key], $1.comment);
-        // }
+        // $$.value[$1[0]] = $1[1];
+        // $$.type = 'object';
     }
     | objectMemberList COMMA objectMember {
-        schemaProperties[$3.key] = {
-            id: '$schemaId-' + $3.key,
-            type: $3.val.type,
-        };
-        yy.extend(schemaProperties[$3.key], $3.comment);
+        $$ = $1;
+        $1[$3[0]] = $3[1];
+        // $$ = $1;
+        // $1.value[$3[0]] = $3[1];
     }
 ;
 
 objectMember
     : SC* (stringLiteral|identLiteral) COLON content {
-        if ($4.key) {
-            $4.parent = $2;
-        }
-        var objectComment = {};
-        if ($1) {
-            objectComment = yy.parseComment($1);
-        }
-        $$ = {
-            key: $2,
-            val: $4,
-            comment: objectComment
-        };
+        // console.warn($2);
+        // console.warn($4);
+        // console.warn('----');
+        // $$ = {
+        //     key: $2,
+        //     value: $4,
+        //     type: 'object'
+        // };
+        // var tmp = {};
+        // tmp[$2] = $4;
+        // $$ = tmp;
+        $$ = [$2.value, $4];
+
+        // $$ = {
+        //     key: $2,
+        //     value: $4,
+        //     type: typeof $4
+        // };
+
+        // if ($4.key) {
+        //     $4.key.parent = $2;
+        // }
+        // var objectComment = {};
+        // if ($1) {
+        //     objectComment = yy.parseComment($1);
+        // }
+        // $$ = {
+        //     key: $2,
+        //     value: $4,
+        //     comment: objectComment
+        // };
     }
 ;
 

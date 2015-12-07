@@ -109,6 +109,7 @@ case 2:
             schema.type = 'object';
             schema.properties = schemaProperties;
         }
+        console.warn(yy.stringify($$[$0-1]), '333');
         console.warn(yy.stringify(schema, schema.id));
         return $$[$0-1];
     
@@ -131,9 +132,10 @@ break;
 case 12:
 
         this.$ = {
-            val: Number(yytext),
-            type: 'integer'
+            type: 'integer',
+            value: Number(yytext)
         }
+        // this.$ = Number(yytext);
     
 break;
 case 13:
@@ -146,9 +148,10 @@ case 13:
             .replace(/\\f/g,'\f')
             .replace(/\\b/g,'\b');
         this.$ = {
-            val: yytext,
-            type: 'string'
+            type: 'string',
+            value: yytext
         }
+        // this.$ = yytext;
     
 break;
 case 14:
@@ -168,61 +171,59 @@ case 16: case 21:
 break;
 case 17:
 
-        // console.warn($$[$0]);
-        // schemaProperties[$$[$0].key] = {
-        //     id: '$schemaId-' + $$[$0].key,
-        //     type: $$[$0].val.type
-        // };
-        // yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
-
-        // if ($$[$0].val.key) {
-        //     delete schemaProperties[$$[$0].val.key];
-        //     schemaProperties[$$[$0].key] = {
-        //         id: '$schemaId-' + $$[$0].key,
-        //         type: 'object'
-        //     };
-        //     if (!schemaProperties[$$[$0].key].properties) {
-        //         schemaProperties[$$[$0].key].properties = {};
-        //     }
-        //     schemaProperties[$$[$0].key].properties[$$[$0].val.key] = {
-        //         id: '$schemaId-' + $$[$0].key + '/' + $$[$0].val.key,
-        //         type: $$[$0].val.val.type
-        //     };
-        //     yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
+        this.$ = {
+            type: 'object'
+        };
+        this.$[$$[$0][0]] = $$[$0][1];
+        // this.$ = {};
+        // if (!this.$.value) {
+        //     this.$.value = {};
         // }
-        // else {
-        //     schemaProperties[$$[$0].key] = {
-        //         id: '$schemaId-' + $$[$0].key,
-        //         type: $$[$0].val.type
-        //     };
-        //     yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
-        // }
+        // this.$.value[$$[$0][0]] = $$[$0][1];
+        // this.$.type = 'object';
     
 break;
 case 18:
 
-        console.warn(123123);
-        schemaProperties[$$[$0].key] = {
-            id: '$schemaId-' + $$[$0].key,
-            type: $$[$0].val.type,
-        };
-        yy.extend(schemaProperties[$$[$0].key], $$[$0].comment);
+        this.$ = $$[$0-2];
+        $$[$0-2][$$[$0][0]] = $$[$0][1];
+        // this.$ = $$[$0-2];
+        // $$[$0-2].value[$$[$0][0]] = $$[$0][1];
     
 break;
 case 19:
 
-        if ($$[$0].key) {
-            $$[$0].parent = $$[$0-2];
-        }
-        var objectComment = {};
-        if ($$[$0-3]) {
-            objectComment = yy.parseComment($$[$0-3]);
-        }
-        this.$ = {
-            key: $$[$0-2],
-            val: $$[$0],
-            comment: objectComment
-        };
+        // console.warn($$[$0-2]);
+        // console.warn($$[$0]);
+        // console.warn('----');
+        // this.$ = {
+        //     key: $$[$0-2],
+        //     value: $$[$0],
+        //     type: 'object'
+        // };
+        // var tmp = {};
+        // tmp[$$[$0-2]] = $$[$0];
+        // this.$ = tmp;
+        this.$ = [$$[$0-2].value, $$[$0]];
+
+        // this.$ = {
+        //     key: $$[$0-2],
+        //     value: $$[$0],
+        //     type: typeof $$[$0]
+        // };
+
+        // if ($$[$0].key) {
+        //     $$[$0].key.parent = $$[$0-2];
+        // }
+        // var objectComment = {};
+        // if ($$[$0-3]) {
+        //     objectComment = yy.parseComment($$[$0-3]);
+        // }
+        // this.$ = {
+        //     key: $$[$0-2],
+        //     value: $$[$0],
+        //     comment: objectComment
+        // };
     
 break;
 case 20:
