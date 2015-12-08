@@ -90,6 +90,11 @@ case 1:
 break;
 case 2:
 
+        schema = {
+            '$schema': 'http://json-schema.org/draft-04/schema#',
+            'id': 'http://jsonschema.net'
+        };
+
         if ($$[$0-2]) {
             var startComment = yy.parseComment($$[$0-2]);
             for (var i in startComment) {

@@ -1,9 +1,9 @@
 'use strict';
 
 // import chalk from 'chalk';
-import parserMod from './parser';
 import safeStringify from 'json-stringify-safe';
-
+import parserMod from './parser';
+import * as util from './util';
 
 let parser = parserMod.parser;
 parser.yy = {
@@ -27,7 +27,7 @@ parser.yy = {
      * @return {string} 去除空格后的字符串
      */
     trim(str) {
-        return str.replace(/(^\s+)|(\s+$)/g, '');
+        return util.trim(str);
     },
 
     /**
@@ -180,20 +180,7 @@ parser.yy = {
      * @return {Object} 返回目标对象
      */
     extend(target) {
-        let i = -1;
-        let length = arguments.length;
-        while (++i < length) {
-            let src = arguments[i];
-            if (src == null) {
-                continue;
-            }
-            for (let key in src) {
-                if (src.hasOwnProperty(key)) {
-                    target[key] = src[key];
-                }
-            }
-        }
-        return target;
+        return util.extend.apply(target, arguments);
     },
 
     /**

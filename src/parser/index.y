@@ -18,6 +18,11 @@ root
         $$ = '';
     }
     | SC* content EOF {
+        schema = {
+            '$schema': 'http://json-schema.org/draft-04/schema#',
+            'id': 'http://jsonschema.net'
+        };
+
         if ($1) {
             var startComment = yy.parseComment($1);
             for (var i in startComment) {
