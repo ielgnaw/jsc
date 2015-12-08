@@ -122,9 +122,6 @@ parser.yy = {
         let itemsLen = items.length;
         while (++itemsIndex < itemsLen) {
             let item = items[itemsIndex];
-            if (item.properties) {
-                this.loopPropertiesInArr(item.properties, item.id.replace('$schemaId-', ''));
-            }
 
             delete item.value;
 
@@ -138,6 +135,10 @@ parser.yy = {
             else {
                 let id = item.id.replace('$schemaId-', '');
                 item.id = '$schemaId-' + defaultParent + id;
+            }
+
+            if (item.properties) {
+                this.loopPropertiesInArr(item.properties, defaultParent + parent);
             }
         }
     },
