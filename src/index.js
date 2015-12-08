@@ -7,13 +7,6 @@ import safeStringify from 'json-stringify-safe';
 
 let parser = parserMod.parser;
 parser.yy = {
-    test(t) {
-        if (t) {
-            return 1;
-        }
-        return 2;
-    },
-
     /**
      * 序列化 JSON 对象，调试用
      *
@@ -50,7 +43,7 @@ parser.yy = {
             let item = items[itemsIndex];
             delete item.value;
 
-            var parent = item.id.replace('$schemaId-', '');
+            let parent = item.id.replace('$schemaId-', '');
             if (item.items) {
                 let id = item.id.replace('$schemaId-', '');
                 item.id = '$schemaId-' + parentId + '/' + parent;
@@ -160,7 +153,7 @@ parser.yy = {
 
             delete item.value;
 
-            var parent = item.id.replace('$schemaId-', '');
+            let parent = item.id.replace('$schemaId-', '');
             if (item.items) {
                 let id = item.id.replace('$schemaId-', '');
                 item.id = '$schemaId-' + defaultParent + parent;

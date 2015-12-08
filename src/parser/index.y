@@ -1,7 +1,7 @@
 %{
     var schema = {
         '$schema': 'http://json-schema.org/draft-04/schema#',
-        'id': ''
+        'id': 'http://jsonschema.net'
     };
 %}
 
@@ -29,15 +29,7 @@ root
                 }
             }
         }
-        // if (Array.isArray($2)) {
-        //     schema.type = 'array';
-        // }
-        // else {
-        //     schema.type = 'object';
-        // }
 
-        // console.warn(yy.stringify($2, schema.id), '333');
-        // console.warn(yy.stringify(schema, schema.id));
         schema.type = $2.type;
 
         var properties = $2.properties;
@@ -52,12 +44,10 @@ root
             yy.analyzeParent4Arr(items);
         }
 
-        console.warn();
-        console.warn();
         console.warn(yy.stringify($2, schema.id), '33');
 
-        // console.warn(yy.stringify(schema, schema.id));
-        return $2;
+        console.warn(yy.stringify(schema, schema.id));
+        return yy.extend(schema, JSON.parse(yy.stringify($2, schema.id)));
     }
 ;
 
@@ -101,7 +91,6 @@ numberLiteral
             type: 'integer',
             value: Number(yytext)
         }
-        // $$ = Number(yytext);
     }
 ;
 
@@ -118,13 +107,11 @@ stringLiteral
             type: 'string',
             value: yytext
         };
-        // $$ = yytext;
     }
 ;
 
 identLiteral
     : IDENT {
-        // $$ = $1;
         $$ = {
             type: 'string',
             value: yytext
@@ -143,84 +130,34 @@ objectLiteral
 
 objectMemberList
     : objectMember {
-        // $$ = {
-        //     type: 'object'
-        // };
-        // $1[1].id = '$schemaId-' + $1[0];
-        // $$[$1[0]] = $1[1];
-
         $$ = {
             type: 'object',
-            // id: '$schemaId-' + $1[0],
             properties: {}
         };
         $1[1].id = '$schemaId-' + $1[0];
-        // if (!$$.properties) {
-            // $$.properties = {};
-        // }
         $$.properties[$1[0]] = $1[1];
-        // $$.properties[$1[0]].comment = $1[2];
         yy.extend($$.properties[$1[0]], $1[2]);
     }
     | objectMemberList COMMA objectMember {
-        // $$ = $1;
-        // $3[1].id = '$schemaId-' + $3[0];
-        // $1[$3[0]] = $3[1];
-
         $$ = $1;
         $3[1].id = '$schemaId-' + $3[0];
         $1.properties[$3[0]] = $3[1];
-        // $1.properties[$3[0]].comment = $3[2];
         yy.extend($1.properties[$3[0]], $3[2]);
     }
 ;
 
 objectMember
     : SC* (stringLiteral|identLiteral) COLON content {
-        // console.warn($2);
-        // console.warn($4);
-        // console.warn('----');
-        // $$ = {
-        //     key: $2,
-        //     value: $4,
-        //     type: 'object'
-        // };
-        // var tmp = {};
-        // tmp[$2] = $4;
-        // $$ = tmp;
-
         if ($4.type === 'object') {
             for (var i in $4.properties) {
-                // if (i !== 'type') {
-                    $4.properties[i].parent = $2.value;
-                // }
+                $4.properties[i].parent = $2.value;
             }
         }
-
         var objectComment = {};
         if ($1) {
             objectComment = yy.parseComment($1);
         }
-        // console.warn(objectComment);
         $$ = [$2.value, $4, objectComment];
-        // $$ = {
-        //     key: $2,
-        //     value: $4,
-        //     type: typeof $4
-        // };
-
-        // if ($4.key) {
-        //     $4.key.parent = $2;
-        // }
-        // var objectComment = {};
-        // if ($1) {
-        //     objectComment = yy.parseComment($1);
-        // }
-        // $$ = {
-        //     key: $2,
-        //     value: $4,
-        //     comment: objectComment
-        // };
     }
 ;
 
@@ -239,9 +176,6 @@ arrayLiteral
 
 arrayMemberList
     : SC* content {
-        // $1 && console.warn($1);
-        // $$ = [$2];
-        // console.warn($2);
         $$ = {
             type: 'array',
             items: []
@@ -255,9 +189,6 @@ arrayMemberList
         $$.items.push($2);
     }
     | arrayMemberList COMMA SC* content {
-        // $1.push($4);
-        // $$ = $1;
-
         $4.id = '$schemaId-' + $1.items.length;
         var arrayComment = {};
         if ($3) {

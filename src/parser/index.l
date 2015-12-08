@@ -5,7 +5,6 @@ frac                        "."[0-9]+
 number                      {int}{frac}?{exp}?\b
 space                       [ \s\t]+
 n                           \n+
-
 ident                       [a-zA-Z_0-9]+
 /*'"*/ // 这个注释是为了把 ident 的正则所带来的高亮影响给去掉
 string1                     \"([^\n\r\f\\"])*\"
@@ -13,15 +12,11 @@ string1                     \"([^\n\r\f\\"])*\"
 string2                     \'([^\n\r\f\\'])*\'
 /*'*/ // 这个注释是为了把 string2 的正则所带来的高亮影响给去掉
 string                      {string1}|{string2}
-
 leftBrace                   \{
 rightBrace                  \}
-
 leftSbracket                \[
 rightSbracket               \]
-
 singlecomment               \/\/[^\n]*
-
 colon                       ':'
 comma                       ','
 
@@ -53,9 +48,6 @@ comma                       ','
      // ignore \n
 };
 
-/**
- * singlecomment
- */
 <s>{singlecomment} {
     yytext = yytext.replace(/\/\/\s*/, '');
     if (this.topState() !== 'sc') {

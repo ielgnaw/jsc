@@ -11,7 +11,8 @@ import p from './index';
 let debug = debugMod('jsc');
 
 let content = readFileSync(
-    join(__dirname, '..') + sep + 'src/tmp.js',
+    // join(__dirname, '..') + sep + 'test/fixture' + sep + 'data1.js',
+    join(__dirname, '..') + sep + 'test/fixture' + sep + 'data4.js',
     'utf8'
 );
 
@@ -24,6 +25,9 @@ content = content.replace(/\r\n?/g, '\n');
 // }
 
 let parserRet = safeStringify(p.parse(content), null, 4);
+var jisonAstFile = join(__dirname, '..') + sep + 'result.json';
+writeFileSync(jisonAstFile, parserRet);
+debug('Parse Result JSON saved to %s', jisonAstFile);
 
 // console.warn(parserRet, 'ppp');
 
