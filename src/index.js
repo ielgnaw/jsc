@@ -12,12 +12,113 @@ parser.yy = {
         return 2;
     },
 
+    /**
+     * 序列化 JSON 对象，调试用
+     *
+     * @param {Object} schema 待序列化的 json 对象
+     * @param {string} schemaId 关键字用于替换
+     *
+     * @return {string} 序列化后的字符串
+     */
     stringify(schema, schemaId) {
         return safeStringify(schema, null, 4).replace(/\$schemaId-/g, schemaId + '/');
     },
 
+    /**
+     * 去除空格
+     *
+     * @param {string} str 待去除空格的字符串
+     *
+     * @return {string} 去除空格后的字符串
+     */
     trim(str) {
         return str.replace(/(^\s+)|(\s+$)/g, '');
+    },
+
+    /**
+     * 递归分析对象中的 parent
+     *
+     * @param {Object} properties 源属性
+     * @param {Object} targetProperties 目标属性
+     * @param {string} defaultParent 默认的一个 parent，初始时为空
+     */
+    analyzeParent4Obj(properties, targetProperties, defaultParent) {
+        for (let i in properties) {
+            if (properties.hasOwnProperty(i)) {
+                delete properties[i].value;
+                let parent = properties[i].parent;
+                delete properties[i].parent;
+                if (parent) {
+                    let id = properties[i].id.replace('$schemaId-', '');
+                    properties[i].id = ''
+                        + '$schemaId-'
+                        + (defaultParent ? defaultParent + '/' : '')
+                        + parent
+                        + '/'
+                        + id;
+                }
+                targetProperties[i] = properties[i];
+                if (properties[i].properties) {
+                    if (defaultParent) {
+                        defaultParent += ('/' + (parent || ''));
+                    }
+                    else {
+                        defaultParent = (parent || '');
+                    }
+                    if (!targetProperties[i].properties) {
+                        targetProperties[i].properties = {};
+                    }
+                    this.analyzeParent4Obj(
+                        properties[i].properties,
+                        targetProperties[i].properties,
+                        defaultParent
+                    );
+                }
+            }
+        }
+    },
+
+    /**
+     * 递归分析数组中的 parent
+     *
+     * @param {Object} properties 源属性
+     * @param {Object} targetProperties 目标属性
+     * @param {string} defaultParent 默认的一个 parent，初始时为空
+     */
+    analyzeParent4Arr(properties, targetProperties, defaultParent) {
+        for (let i in properties) {
+            if (properties.hasOwnProperty(i)) {
+                delete properties[i].value;
+                let parent = properties[i].parent;
+                delete properties[i].parent;
+                if (parent) {
+                    let id = properties[i].id.replace('$schemaId-', '');
+                    properties[i].id = ''
+                        + '$schemaId-'
+                        + (defaultParent ? defaultParent + '/' : '')
+                        + parent
+                        + '/'
+                        + id;
+                }
+                targetProperties[i] = properties[i];
+                if (properties[i].properties) {
+                    if (defaultParent) {
+                        defaultParent += ('/' + (parent || ''));
+                    }
+                    else {
+                        defaultParent = (parent || '');
+                    }
+                    if (!targetProperties[i].properties) {
+                        targetProperties[i].properties = {};
+                    }
+                    this.analyzeParent4Arr(
+                        properties[i].properties,
+                        targetProperties[i].properties,
+                        defaultParent
+                    );
+                }
+            }
+        }
     },
 
     /**
@@ -29,14 +130,14 @@ parser.yy = {
      * @return {Object} 返回目标对象
      */
     extend(target) {
-        var i = -1;
-        var length = arguments.length;
+        let i = -1;
+        let length = arguments.length;
         while (++i < length) {
-            var src = arguments[i];
+            let src = arguments[i];
             if (src == null) {
                 continue;
             }
-            for (var key in src) {
+            for (let key in src) {
                 if (src.hasOwnProperty(key)) {
                     target[key] = src[key];
                 }
@@ -63,8 +164,8 @@ parser.yy = {
             let len = segments.length;
             while (++i < len) {
                 /([^:]*):(.*)/.test(segments[i]);
-                var key = RegExp.$1;
-                var val = RegExp.$2;
+                let key = RegExp.$1;
+                let val = RegExp.$2;
                 if (key) {
                     comment[this.trim(key)] = this.trim(val);
                 }

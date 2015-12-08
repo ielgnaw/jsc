@@ -3,8 +3,6 @@
         '$schema': 'http://json-schema.org/draft-04/schema#',
         'id': ''
     };
-
-    var schemaProperties = {};
 %}
 
 
@@ -31,15 +29,32 @@ root
                 }
             }
         }
-        if (Array.isArray($2)) {
-            schema.type = 'array';
+        // if (Array.isArray($2)) {
+        //     schema.type = 'array';
+        // }
+        // else {
+        //     schema.type = 'object';
+        // }
+
+        // console.warn(yy.stringify($2, schema.id), '333');
+        // console.warn(yy.stringify(schema, schema.id));
+        schema.type = $2.type;
+
+        var properties = $2.properties;
+        if (properties) {
+            schema.properties = {};
+            yy.analyzeParent4Obj(properties, schema.properties, '');
+        }
+
+        var items = $2.items;
+        if (items) {
             schema.items = [];
+            yy.analyzeParent4Arr(items, schema.items, '');
         }
-        else {
-            schema.type = 'object';
-            schema.properties = schemaProperties;
-        }
-        console.warn(yy.stringify($2, schema.id), '333');
+
+
+        console.warn(yy.stringify($2, schema.id), '33');
+
         console.warn(yy.stringify(schema, schema.id));
         return $2;
     }
@@ -135,7 +150,7 @@ objectMemberList
 
         $$ = {
             type: 'object',
-            id: '$schemaId-' + $1[0],
+            // id: '$schemaId-' + $1[0],
             properties: {}
         };
         $1[1].id = '$schemaId-' + $1[0];
@@ -187,7 +202,6 @@ objectMember
         }
         // console.warn(objectComment);
         $$ = [$2.value, $4, objectComment];
-
         // $$ = {
         //     key: $2,
         //     value: $4,
