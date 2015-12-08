@@ -43,7 +43,7 @@ root
         var properties = $2.properties;
         if (properties) {
             schema.properties = {};
-            yy.analyzeParent4Obj(properties, schema.properties, '');
+            yy.analyzeParent4Obj(properties, schema.properties);
         }
 
         var items = $2.items;

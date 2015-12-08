@@ -42,7 +42,7 @@ parser.yy = {
      * @param {Object} targetProperties 目标属性
      * @param {string} defaultParent 默认的一个 parent，初始时为空
      */
-    analyzeParent4Obj(properties, targetProperties, defaultParent) {
+    analyzeParent4Obj(properties, targetProperties, defaultParent = '') {
         for (let i in properties) {
             if (properties.hasOwnProperty(i)) {
                 delete properties[i].value;
@@ -81,44 +81,64 @@ parser.yy = {
     /**
      * 递归分析数组中的 parent
      *
-     * @param {Object} properties 源属性
-     * @param {Object} targetProperties 目标属性
+     * @param {Array} items 源属性
+     * @param {Array} targetItems 目标属性
      * @param {string} defaultParent 默认的一个 parent，初始时为空
      */
-    analyzeParent4Arr(properties, targetProperties, defaultParent) {
-        for (let i in properties) {
-            if (properties.hasOwnProperty(i)) {
-                delete properties[i].value;
-                let parent = properties[i].parent;
-                delete properties[i].parent;
+    analyzeParent4Arr(items, targetItems, defaultParent) {
+        let itemsIndex = -1;
+        let itemsLen = items.length;
+        console.warn(items);
+        console.warn(targetItems);
+        console.warn('-------');
+        while (++itemsIndex < itemsLen) {
+            // if (items[itemsIndex].properties) {
+            //     this.analyzeParent4Obj(
+            //         items[itemsIndex].properties,
+            //         items[itemsIndex].properties,
+            //         items[itemsIndex].id.replace('$schemaId-', '')
+            //     );
+            // }
+        }
+
+
+        // while (++itemsIndex < itemsLen) {
+            // delete items[itemsIndex].value;
+        // }
+
+        /*for (let i in items) {
+            if (items.hasOwnProperty(i)) {
+                delete items[i].value;
+                let parent = items[i].parent;
+                delete items[i].parent;
                 if (parent) {
-                    let id = properties[i].id.replace('$schemaId-', '');
-                    properties[i].id = ''
+                    let id = items[i].id.replace('$schemaId-', '');
+                    items[i].id = ''
                         + '$schemaId-'
                         + (defaultParent ? defaultParent + '/' : '')
                         + parent
                         + '/'
                         + id;
                 }
-                targetProperties[i] = properties[i];
-                if (properties[i].properties) {
+                targetItems[i] = items[i];
+                if (items[i].items) {
                     if (defaultParent) {
                         defaultParent += ('/' + (parent || ''));
                     }
                     else {
                         defaultParent = (parent || '');
                     }
-                    if (!targetProperties[i].properties) {
-                        targetProperties[i].properties = {};
+                    if (!targetItems[i].items) {
+                        targetItems[i].items = {};
                     }
                     this.analyzeParent4Arr(
-                        properties[i].properties,
-                        targetProperties[i].properties,
+                        items[i].items,
+                        targetItems[i].items,
                         defaultParent
                     );
                 }
             }
-        }
+        }*/
     },
 
     /**

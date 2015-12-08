@@ -115,10 +115,14 @@ case 2:
         var properties = $$[$0-1].properties;
         if (properties) {
             schema.properties = {};
-            yy.analyzeParent(properties, schema.properties, '');
+            yy.analyzeParent4Obj(properties, schema.properties);
         }
 
         var items = $$[$0-1].items;
+        if (items) {
+            schema.items = [];
+            yy.analyzeParent4Arr(items, schema.items, '');
+        }
 
 
         console.warn(yy.stringify($$[$0-1], schema.id), '33');
