@@ -31,7 +31,7 @@ comma                       ','
     var s, s2, s3;
     var rv, rv2, e_offset, col, row, len, value;
     var match, match2;
-    debug(YY_START);
+    // debug(YY_START);
 %}
 
 

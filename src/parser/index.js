@@ -121,7 +121,7 @@ case 2:
         var items = $$[$0-1].items;
         if (items) {
             schema.items = [];
-            yy.analyzeParent4Arr(items, schema.items, '');
+            yy.analyzeParent4Arr(items);
         }
 
 
@@ -813,7 +813,7 @@ performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
     var s, s2, s3;
     var rv, rv2, e_offset, col, row, len, value;
     var match, match2;
-    debug(YY_START);
+    // debug(YY_START);
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {

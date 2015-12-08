@@ -49,7 +49,7 @@ root
         var items = $2.items;
         if (items) {
             schema.items = [];
-            yy.analyzeParent4Arr(items, schema.items, '');
+            yy.analyzeParent4Arr(items);
         }
 
 
