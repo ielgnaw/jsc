@@ -52,10 +52,11 @@ root
             yy.analyzeParent4Arr(items);
         }
 
-
+        console.warn();
+        console.warn();
         console.warn(yy.stringify($2, schema.id), '33');
 
-        console.warn(yy.stringify(schema, schema.id));
+        // console.warn(yy.stringify(schema, schema.id));
         return $2;
     }
 ;

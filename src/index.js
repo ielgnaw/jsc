@@ -38,6 +38,37 @@ parser.yy = {
     },
 
     /**
+     * 分析对象中的嵌套数组的 parent
+     *
+     * @param {Array} items 源属性
+     * @param {string} parentId 默认的一个 parent，初始时为空
+     */
+    loopArrInProperties(items, parentId = '') {
+        let itemsIndex = -1;
+        let itemsLen = items.length;
+        while (++itemsIndex < itemsLen) {
+            let item = items[itemsIndex];
+            delete item.value;
+
+            var parent = item.id.replace('$schemaId-', '');
+            if (item.items) {
+                let id = item.id.replace('$schemaId-', '');
+                item.id = '$schemaId-' + parentId + '/' + parent;
+                parentId += '/' + parent;
+                this.loopArrInProperties(item.items, parentId);
+            }
+            else {
+                let id = item.id.replace('$schemaId-', '');
+                item.id = '$schemaId-' + parentId + '/' + id;
+            }
+
+            if (item.properties) {
+                this.loopPropertiesInArr(item.properties, parentId + '/' + parent);
+            }
+        }
+    },
+
+    /**
      * 递归分析对象中的 parent
      *
      * @param {Object} properties 源属性
@@ -75,6 +106,10 @@ parser.yy = {
                         targetProperties[i].properties,
                         defaultParent
                     );
+                }
+
+                if (properties[i].items) {
+                    this.loopArrInProperties(properties[i].items, properties[i].id.replace('$schemaId-', ''));
                 }
             }
         }
