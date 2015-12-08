@@ -116,15 +116,16 @@ case 2:
             yy.analyzeParent4Arr(items);
         }
 
-        console.warn(yy.stringify($$[$0-1], schema.id), '33');
-
-        console.warn(yy.stringify(schema, schema.id));
-        return yy.extend(schema, JSON.parse(yy.stringify($$[$0-1], schema.id)));
+        var id = schema.id;
+        yy.extend(schema, JSON.parse(yy.stringify($$[$0-1], schema.id)))
+        schema.id = id;
+        return schema;
     
 break;
 case 9:
 
         this.$ = {
+            id: '',
             type: 'null',
             value: null
         };
@@ -133,6 +134,7 @@ break;
 case 10:
 
         this.$ = {
+            id: '',
             type: 'boolean',
             value: true
         };
@@ -141,6 +143,7 @@ break;
 case 11:
 
         this.$ = {
+            id: '',
             type: 'boolean',
             value: false
         };
@@ -149,6 +152,7 @@ break;
 case 12:
 
         this.$ = {
+            id: '',
             type: 'integer',
             value: Number(yytext)
         }
@@ -164,6 +168,7 @@ case 13:
             .replace(/\\f/g,'\f')
             .replace(/\\b/g,'\b');
         this.$ = {
+            id: '',
             type: 'string',
             value: yytext
         };
@@ -172,6 +177,7 @@ break;
 case 14:
 
         this.$ = {
+            id: '',
             type: 'string',
             value: yytext
         };
@@ -190,6 +196,7 @@ break;
 case 17:
 
         this.$ = {
+            id: '',
             type: 'object',
             properties: {}
         };
@@ -223,8 +230,8 @@ break;
 case 20:
 
         this.$ = {
-            type: 'array',
             id: '$schemaId-',
+            type: 'array',
             items: []
         };
     
@@ -232,6 +239,7 @@ break;
 case 22:
 
         this.$ = {
+            id: '',
             type: 'array',
             items: []
         };

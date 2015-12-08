@@ -44,10 +44,10 @@ root
             yy.analyzeParent4Arr(items);
         }
 
-        console.warn(yy.stringify($2, schema.id), '33');
-
-        console.warn(yy.stringify(schema, schema.id));
-        return yy.extend(schema, JSON.parse(yy.stringify($2, schema.id)));
+        var id = schema.id;
+        yy.extend(schema, JSON.parse(yy.stringify($2, schema.id)))
+        schema.id = id;
+        return schema;
     }
 ;
 
@@ -64,6 +64,7 @@ content
 nullLiteral
     : NULL {
         $$ = {
+            id: '',
             type: 'null',
             value: null
         };
@@ -73,12 +74,14 @@ nullLiteral
 booleanLiteral
     : TRUE {
         $$ = {
+            id: '',
             type: 'boolean',
             value: true
         };
     }
     | FALSE {
         $$ = {
+            id: '',
             type: 'boolean',
             value: false
         };
@@ -88,6 +91,7 @@ booleanLiteral
 numberLiteral
     : NUMBER {
         $$ = {
+            id: '',
             type: 'integer',
             value: Number(yytext)
         }
@@ -104,6 +108,7 @@ stringLiteral
             .replace(/\\f/g,'\f')
             .replace(/\\b/g,'\b');
         $$ = {
+            id: '',
             type: 'string',
             value: yytext
         };
@@ -113,6 +118,7 @@ stringLiteral
 identLiteral
     : IDENT {
         $$ = {
+            id: '',
             type: 'string',
             value: yytext
         };
@@ -131,6 +137,7 @@ objectLiteral
 objectMemberList
     : objectMember {
         $$ = {
+            id: '',
             type: 'object',
             properties: {}
         };
@@ -164,8 +171,8 @@ objectMember
 arrayLiteral
     : SBRACKET_START SBRACKET_END {
         $$ = {
-            type: 'array',
             id: '$schemaId-',
+            type: 'array',
             items: []
         };
     }
@@ -177,6 +184,7 @@ arrayLiteral
 arrayMemberList
     : SC* content {
         $$ = {
+            id: '',
             type: 'array',
             items: []
         };
