@@ -37,6 +37,7 @@ function loopDir(path, dirs) {
         dirs.unshift(path);
         innerDir(path, dirs);
     }
+    /* istanbul ignore else */
     else if (stat.isFile()) {
         // 删除文件
         unlinkSync(path);
@@ -53,7 +54,7 @@ function loopDir(path, dirs) {
  */
 export function rmrfdirSync(dir) {
     let dirs = [];
-    let removePromise = new Promise((resolve, reject) => {
+    let removePromise = new Promise((resolve/*, reject*/) => {
         try {
             loopDir(dir, dirs);
             let i = -1;
@@ -66,7 +67,8 @@ export function rmrfdirSync(dir) {
         } catch (e) {
             // 如果文件或目录本来就不存在，fs.statSync 会报错，这里不处理了
             // e.code === 'ENOENT' ? reject() : reject(e);
-            e.code === 'ENOENT' ? resolve() : resolve(e);
+            // e.code === 'ENOENT' ? resolve(e) : resolve(e);
+            resolve(e);
         }
     });
 
@@ -90,6 +92,7 @@ export function extend(target) {
             continue;
         }
         for (let key in src) {
+            /* istanbul ignore else */
             if (src.hasOwnProperty(key)) {
                 target[key] = src[key];
             }
@@ -182,6 +185,7 @@ export function getCandidates(args, patterns) {
                     glob.sync(target + '/' + patterns[0])
                 );
             }
+            /* istanbul ignore else */
             else if (stat.isFile()) {
                 candidates.push(target);
             }

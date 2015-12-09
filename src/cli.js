@@ -6,11 +6,19 @@
 'use strict';
 
 import chalk from 'chalk';
-import {readFileSync, existsSync} from 'fs';
-import {join} from 'path';
+import safeStringify from 'json-stringify-safe';
 import minimist from 'minimist';
+import debugMod from 'debug';
+import {readFileSync, writeFileSync} from 'fs';
+import {sep, basename} from 'path';
 import sys from '../package';
 import {formatMsg, getCandidates} from './util';
+import mkdirp from 'mkdirp';
+import parser from './parser';
+
+const DEFAULT_OUTPUT = './jscOutput';
+
+let debug = debugMod('jsc');
 
 /**
  * 显示默认的信息
@@ -33,8 +41,9 @@ export function parse(args) {
     let options = minimist(
         args || [],
         {
+            'string': ['_', 'output'],
             'default': {
-                output: './output'
+                output: DEFAULT_OUTPUT
             },
             'alias': {
                 o: 'output',
@@ -59,54 +68,30 @@ export function parse(args) {
     ];
 
     let candidates = getCandidates(options._, patterns);
-    candidates.forEach((candidate) => {
-        console.warn(candidate);
-        let file = {
-            content: readFileSync(candidate, 'utf-8'),
-            path: candidate
-        };
+
+    if (!candidates.length) {
+        return;
+    }
+
+    let outputDir = process.cwd() + sep + (options.o || DEFAULT_OUTPUT);
+    mkdirp(outputDir, (err) => {
+        if (err) {
+            throw err;
+        }
+
+        candidates.forEach((file) => {
+            let content = readFileSync(file, 'utf8');
+            content = content.replace(/\r\n?/g, '\n');
+            try {
+                let parserRet = safeStringify(parser.parse(content), null, 4);
+                let outputFile = outputDir + sep + basename(file).replace(/\.jsc$/, '.json');
+                writeFileSync(outputFile, parserRet);
+                debug('Parse Result JSON File saved to %s', outputFile);
+            }
+            catch (e) {
+                console.warn(e);
+                // throw e;
+            }
+        });
     });
-
-
-    // // 错误信息的集合
-    // var errors = [];
-
-    // var patterns = [
-    //     '**/*.less',
-    //     '!**/{output,test,node_modules,asset,dist,release,doc,dep,report}/**'
-    // ];
-
-    // var candidates = util.getCandidates(args, patterns);
-
-    // var count = candidates.length;
-
-    // if (count) {
-
-    //     *
-    //      * 每个文件的校验结果回调，主要用于统计校验完成情况
-    //      *
-    //      * @inner
-
-    //     var callback = function () {
-    //         count--;
-    //         if (!count) {
-    //             report(errors);
-    //         }
-    //     };
-
-    //     // 遍历每个需要检测的 less 文件
-    //     candidates.forEach(
-    //         function (candidate) {
-    //             var file = {
-    //                 content: fs.readFileSync(
-    //                     candidate,
-    //                     'utf-8'
-    //                 ),
-    //                 path: candidate
-    //             };
-    //             require('./checker').check(file, errors, callback);
-    //         }
-    //     );
-    // }
-
-};
+}
