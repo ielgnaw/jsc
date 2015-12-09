@@ -1,6 +1,5 @@
 'use strict';
 
-// import chalk from 'chalk';
 import safeStringify from 'json-stringify-safe';
 import parserMod from './parser';
 import * as util from './util';

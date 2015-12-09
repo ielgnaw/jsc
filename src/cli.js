@@ -1,22 +1,72 @@
+/**
+ * @file cli
+ * @author ielgnaw(wuji0223@gmail.com)
+ */
+
+'use strict';
+
+import chalk from 'chalk';
+import {readFileSync, existsSync} from 'fs';
+import {join} from 'path';
+import minimist from 'minimist';
+import sys from '../package';
+import {formatMsg, getCandidates} from './util';
+
+/**
+ * 显示默认的信息
+ */
+function showDefaultInfo() {
+    console.log('');
+    console.log(sys.name + ' v' + sys.version);
+    console.log(chalk.bold.green(formatMsg(sys.description)));
+}
 
 /**
  * 解析参数。作为命令行执行的入口
  *
  * @param {Array} args 参数列表
  */
-exports.parse = function (args) {
-    console.log(args,999);
-    // args = args.slice(2);
+export function parse(args) {
 
-    // // 不带参数时，默认检测当前目录下所有的 less 文件
-    // if (args.length === 0) {
-    //     args.push('.');
-    // }
+    args = args.slice(2);
 
-    // if (args[0] === '--version' || args[0] === '-v') {
-    //     showDefaultInfo();
-    //     return;
-    // }
+    let options = minimist(
+        args || [],
+        {
+            'default': {
+                output: './output'
+            },
+            'alias': {
+                o: 'output',
+                v: 'version'
+            }
+        }
+    );
+
+    if (options.v) {
+        showDefaultInfo();
+        return;
+    }
+
+    // 不带参数时，默认检测当前目录下文件
+    if (!options._.length) {
+        options._.push('.');
+    }
+
+    let patterns = [
+        '**/*.jsc',
+        '!**/{output,test,node_modules,asset,dist,release,doc,dep,report,coverage}/**'
+    ];
+
+    let candidates = getCandidates(options._, patterns);
+    candidates.forEach((candidate) => {
+        console.warn(candidate);
+        let file = {
+            content: readFileSync(candidate, 'utf-8'),
+            path: candidate
+        };
+    });
+
 
     // // 错误信息的集合
     // var errors = [];
