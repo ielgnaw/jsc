@@ -3,6 +3,9 @@
   "version": "0.0.1-beta.1",
   "description": "JSON Schema Converter",
   "main": "index.js",
+  "bin": {
+    "jsc": "./bin/cli"
+  },
   "scripts": {
     "b": "babel src --out-dir lib",
     "s": "jison src/parser/index.y src/parser/index.l -o src/parser/index.js && npm run b && DEBUG=jsc* node lib/test.js",
